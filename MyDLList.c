@@ -109,7 +109,7 @@ struct DLList *cloneList(struct DLList *u){
 bool ispresent(struct DLList *u, char data[255]){
 	struct DLList *is = u;
 	while(is !=NULL){
-		if(*is->data == *data){
+		if(strncmp(is->data, data, 255) == 0){	
 			return 1;
 		}
 		is = is->next;
