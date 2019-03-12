@@ -118,23 +118,36 @@ bool ispresent(struct DLList *u, char data[255]){
 }
 
 struct DLList *setUnion(struct DLList *u, struct DLList *v){
+	//it is not good to change the original lists.
+	//so we need create a new list.
+	struct DLList *setU = NULL;
 	struct DLList *p = u;
-	while(p!=NULL){
-		struct DLList *temp = p;
-		p = p->next;
-		if(p!=NULL){
-			p->prev = NULL;
+	struct DLList *p2 = v;
+	while(p2 != NULL){
+		struct DLList * new = createNode(p2->data);
+		if(setU == NULL){
+			setU = new;
+		}else{
+			new->next = setU;
+			setU->prev = new;
+			setU = new;
 		}
-		temp->next = NULL;
-		if(ispresent(v,temp->data)){
+		p2 = p2->next;
+	}
+	while(p != NULL){
+		char newData[255];
+		strcpy(newData,p->data);
+		p = p->next;
+		if(ispresent(v,newData)){
 			continue;
 		}else{
-			temp->next = v;
-			v->prev = temp;
-			v = temp;
+			struct DLList * new2 = createNode(newData);
+			new2->next = setU;
+			setU->prev = new2;
+			setU = new2;
 		}
 	}
-	return v;
+	return setU;
 }
 
 
