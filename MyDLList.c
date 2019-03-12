@@ -24,9 +24,8 @@ struct DLList *createNode(char v[]){
 struct DLList *CreateDLListFromFileDlist(const char *filename){
 	FILE *fp;
 	char node_data[255];
-	char *s;
-	struct DLList *head;
-	struct DLList *tail;
+	struct DLList *head = NULL;
+	struct DLList *tail = NULL;
 	if (strncmp(filename,"stdin", 5)==0){
 		while(1){
 			gets(node_data);
