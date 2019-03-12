@@ -145,12 +145,12 @@ struct DLList *setUnion(struct DLList *u, struct DLList *v){
 			continue;
 		}else{
 			struct DLList * new2 = createNode(newData);
-			new2->next = setU;
-			setU->prev = new2;
-			setU = new2;
+			new2->next = ulist;
+			ulist->prev = new2;
+			ulist = new2;
 		}
 	}
-	return setU;
+	return ulist;
 }
 
 
@@ -190,31 +190,32 @@ void freeDLList(struct DLList **u){
 //assume the len of DLL is n, then time_complexity:O(n)
 
 int main(void){
-	char *filename = "test.txt";
+	char *f1 = "test.txt";
+	char *f2 = "test2.txt";
 	struct DLList *h;
 	struct DLList *copy;
 	struct DLList *su;
 	struct DLList *si;
 	struct DLList *t;
-	// h = CreateDLListFromFileDlist(filename);
-	// printf("The doubly linked list is:\n");
-	// printDLList(h);
-	// printf("\n");
-	// copy = cloneList(h);
-	// printf("The identical copied doubly linked list is:\n");
-	// printDLList(copy);
+	h = CreateDLListFromFileDlist(f1);
+	printf("\nThe doubly linked list is:\n");
+	printDLList(h);
+	printf("\n");
+	copy = cloneList(h);
+	printf("\nThe identical copied doubly linked list is:\n");
+	printDLList(copy);
 	
-	// freeDLList(&copy);
-	// printDLList(copy);
+	freeDLList(&copy);
+	printDLList(copy);
 
-	//problem: when running setunion and setintersection, no out.
-	h = CreateDLListFromFileDlist(filename); 
-	t = CreateDLListFromFileDlist(filename);
-	t = CreateDLListFromFileDlist(filename);
-	t = CreateDLListFromFileDlist(filename);
+	printf("\nAnother doubly linked list is:\n");
+	t = CreateDLListFromFileDlist(f2);
 	printDLList(t);
+	// printf("\nThe union of doubly linked lists is:\n");
 	// su = setUnion(h, t);
-	// // si = setIntersection(h, t);
 	// printDLList(su);
+	printf("\nThe intersection of doubly linked lists is:\n");
+	si = setIntersection(h, t);
+	printDLList(si);
 	return 0;
 }
