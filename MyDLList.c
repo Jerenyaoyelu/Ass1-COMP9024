@@ -120,20 +120,23 @@ bool ispresent(struct DLList *u, char data[255]){
 struct DLList *setUnion(struct DLList *u, struct DLList *v){
 	//it is not good to change the original lists.
 	//so we need create a new list.
-	struct DLList *setU = NULL;
+	struct DLList *ulist = NULL;
 	struct DLList *p = u;
-	struct DLList *p2 = v;
-	while(p2 != NULL){
-		struct DLList * new = createNode(p2->data);
-		if(setU == NULL){
-			setU = new;
-		}else{
-			new->next = setU;
-			setU->prev = new;
-			setU = new;
-		}
-		p2 = p2->next;
-	}
+	// struct DLList *p2 = NULL;
+	//BUG: when using clonelist function, causing segmentation fault!
+	//result: cloned list mistakenly assigned to wrong pointer p2 instead of ulist!!
+	ulist = cloneList(v);
+	// while(p2 != NULL){
+	// 	struct DLList * new = createNode(p2->data);
+	// 	if(setU == NULL){
+	// 		setU = new;
+	// 	}else{
+	// 		new->next = setU;
+	// 		setU->prev = new;
+	// 		setU = new;
+	// 	}
+	// 	p2 = p2->next;
+	// }
 	while(p != NULL){
 		char newData[255];
 		strcpy(newData,p->data);
