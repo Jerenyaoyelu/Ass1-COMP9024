@@ -50,7 +50,7 @@ DLList *newDLList()
 }
 
 // create a DLList from a text file
-// put your time complexity analysis for CreateDLListFromFileDlist() here
+// time complexity analysis: (assume size is n) O(n) 
 DLList *CreateDLListFromFileDlist(const char *filename)
 {
 	FILE *fp;
@@ -106,7 +106,7 @@ DLList *CreateDLListFromFileDlist(const char *filename)
 }
 
 // clone a DLList
-// put your time complexity analysis for cloneList(): O(L->size)
+// time complexity analysis: (assume size is n) O(n) 
 DLList *cloneList(DLList *u)
 {
 	DLList *L;
@@ -133,6 +133,8 @@ DLList *cloneList(DLList *u)
 	}
 }
 
+//checking duplication
+//time complexity analysis: (assume size is n) O(n) 
 bool ispresent(DLList *u, int value){
 	DLListNode *is = u->first;
 	while(is != NULL){
@@ -145,6 +147,7 @@ bool ispresent(DLList *u, int value){
 }
 
 // compute the union of two DLLists u and v
+// time complexity analysis: (assume size is n and ispresent() is O(n)) O(n^2) 
 DLList *setUnion(DLList *u, DLList *v)
 {
 	DLList *union_L;
@@ -171,7 +174,7 @@ DLList *setUnion(DLList *u, DLList *v)
 }
 
 // compute the insection of two DLLists u and v
-// put your time complexity analysis for intersection() here
+//  time complexity analysis: (assume size is n and ispresent() is O(n)) O(n^2) 
 DLList *setIntersection(DLList *u, DLList *v)
 {
 	DLList *intersection_L;
@@ -196,7 +199,7 @@ DLList *setIntersection(DLList *u, DLList *v)
 }
 
 // free up all space associated with list
-// put your time complexity analysis for freeDLList() here
+// time complexity analysis: (assume size is n) O(n) 
 void freeDLList(DLList *L)
 {
 	while(L->first != NULL){
@@ -208,7 +211,7 @@ void freeDLList(DLList *L)
 
 
 // display items of a DLList
-// put your time complexity analysis for printDDList(): O(u->size)
+// time complexity analysis: (assume size is n) O(n) 
 void printDLList(DLList *u)
 {
 	DLListNode *p;
