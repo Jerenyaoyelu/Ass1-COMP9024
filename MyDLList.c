@@ -1,46 +1,80 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 #include<string.h>
 #include<stdbool.h>
 
-struct DLList{
-	char data[255];
-	struct DLList *next;
-	struct DLList *prev;
-};
-//time_complexity:O(1)
+// all the basic data structures and functions are included in this template
+// you can add your own auxiliary functions as you like 
 
-struct DLList *createNode(char v[]){
-	// create a variable in the heap of memory, 
-	//this will stop this variable vanished when this function is finished(which local variable will do).
-	struct DLList *new = (struct DLList*)malloc(sizeof(new));
-	strcpy(new->data,v);
-	new->next = NULL;
-	new->prev =NULL;
+// data structures representing DLList
+
+// data type for nodes
+typedef struct DLListNode {
+	int  value;  // value (int) of this list item 
+	struct DLListNode *prev;
+	// pointer previous node in list
+	struct DLListNode *next;
+	// pointer to next node in list
+} DLListNode;
+
+//data type for doubly linked lists
+typedef struct DLList{
+	int  size;      // count of items in list
+	DLListNode *first; // first node in list
+	DLListNode *last;  // last node in list
+} DLList;
+
+// create a new DLListNode
+DLListNode *newDLListNode(int it)
+{
+	DLListNode *new;
+	new = malloc(sizeof(DLListNode));
+	assert(new != NULL);
+	new->value = it;
+	new->prev = new->next = NULL;
 	return new;
 }
-//time_complexity:O(1)
 
-struct DLList *CreateDLListFromFileDlist(const char *filename){
+// create a new empty DLList
+DLList *newDLList()
+{
+	DLList *L;
+
+	L = malloc(sizeof (struct DLList));
+	assert (L != NULL);
+	L->size = 0;
+	L->first = NULL;
+	L->last = NULL;
+	return L;
+}
+
+// create a DLList from a text file
+// put your time complexity analysis for CreateDLListFromFileDlist() here
+DLList *CreateDLListFromFileDlist(const char *filename)
+{
 	FILE *fp;
-	char node_data[255];
-	struct DLList *head = NULL;
-	struct DLList *tail = NULL;
+	char data_string[255];
+	DLList *L;
+	L = newDLList();
+
 	if (strncmp(filename,"stdin", 5)==0){
 		while(1){
-			gets(node_data);
-			if(strlen(node_data)==0){
+			gets(data_string);
+			if(strlen(data_string)==0){
 				break;
 			}
-			struct DLList * newnode = createNode(node_data);//newnode here is a local variable which will be cleared after this function is done.
-			if (head==NULL){
-				head = newnode;
-				tail = newnode;
+			DLListNode *newnode;
+			newnode = newDLListNode(atoi(data_string));
+			if (L->size ==0){
+				L->first = newnode;
+				L->last = newnode;
 			}else{
-				tail->next = newnode;
-				newnode->prev = tail;
-				tail = tail->next;
+				newnode->next = L->first;
+				L->first->prev = newnode;
+				L->first = newnode;
 			}
+			L->size ++;
 		}
 	}else{
 		fp=fopen(filename,"r");
@@ -49,67 +83,60 @@ struct DLList *CreateDLListFromFileDlist(const char *filename){
 			return NULL;
 		}
 		while(1){
-			// //fgetc read one char at a time(including space),read char assigned to an int
-			// c=fgetc(fp);
-			fscanf(fp,"%s",node_data);
+			fscanf(fp,"%s",data_string);
 			if(feof(fp)){
 				break;
 			}
-			struct DLList * newnode = createNode(node_data);//newnode here is a local variable which will be cleared after this function is done.
-			if (head==NULL){
-				head = newnode;
-				tail = newnode;
+			DLListNode *newnode;
+			newnode = newDLListNode(atoi(data_string));
+			if (L->size ==0){
+				L->first = newnode;
+				L->last = newnode;
 			}else{
-				tail->next = newnode;
-				newnode->prev = tail;
-				tail = tail->next;
+				newnode->next = L->first;
+				L->first->prev = newnode;
+				L->first = newnode;
 			}
+			L->size ++;
 		}
 		fclose(fp);
 	}
-	return head;
+	return L;
+  
 }
-//assume the len of DLL is n, then time_complexity:O(n)
 
-void printDLList(struct DLList *u ){
-	// This will cause "bus error:10", why??
-	// while(u!=NULL){
-	// 	printf("%s\n",u->data);
-	// 	u = u->next;
-	// }
-	struct DLList *p = u;
-	while(p!=NULL){
-		printf("%s\n",p->data);
-		p = p->next;
-	}
-}
-//assume the len of DLL is n, then time_complexity:O(n)
-
-struct DLList *cloneList(struct DLList *u){
-	//question: when define copy_head with dynamic memory allocation(malloc()), the value of each node in the copied list canot be printed out.
-	//why??
-	struct DLList *copy_head;
-	struct DLList *copy_tail;
-	while (u!=NULL){
-		struct DLList * newcopy = createNode(u->data);
-		if (copy_head==NULL){
-			copy_head = newcopy;
-			copy_tail = newcopy;
-		}else{
-			copy_tail->next = newcopy;
-			newcopy->prev = copy_tail;
-			copy_tail = copy_tail->next;
+// clone a DLList
+// put your time complexity analysis for cloneList(): O(L->size)
+DLList *cloneList(DLList *u)
+{
+	DLList *L;
+	L = newDLList();
+	if (u->size == 0){
+		return L;
+	}else{
+		DLListNode *current = u->first;
+		while (current != NULL){
+			DLListNode *newnode;
+			newnode = newDLListNode(current->value);
+			if (L->size ==0){
+				L->first = newnode;
+				L->last = newnode;
+			}else{
+				newnode->next = L->first;
+				L->first->prev = newnode;
+				L->first = newnode;
+			}
+			L->size ++;
+			current  = current ->next;
 		}
-		u = u->next;
+		return L;
 	}
-	return copy_head;
 }
-//assume the len of DLL is n, then time_complexity:O(n)
 
-bool ispresent(struct DLList *u, char data[255]){
-	struct DLList *is = u;
-	while(is !=NULL){
-		if(strncmp(is->data, data, 255) == 0){	
+bool ispresent(DLList *u, int value){
+	DLListNode *is = u->first;
+	while(is != NULL){
+		if(is->value == value){	
 			return 1;
 		}
 		is = is->next;
@@ -117,104 +144,117 @@ bool ispresent(struct DLList *u, char data[255]){
 	return 0;
 }
 
-struct DLList *setUnion(struct DLList *u, struct DLList *v){
-	//it is not good to change the original lists.
-	//so we need create a new list.
-	struct DLList *ulist = NULL;
-	struct DLList *p = u;
-	// struct DLList *p2 = NULL;
-	//BUG: when using clonelist function, causing segmentation fault!
-	//result: cloned list mistakenly assigned to wrong pointer p2 instead of ulist!!
-	ulist = cloneList(v);
-	// while(p2 != NULL){
-	// 	struct DLList * new = createNode(p2->data);
-	// 	if(setU == NULL){
-	// 		setU = new;
-	// 	}else{
-	// 		new->next = setU;
-	// 		setU->prev = new;
-	// 		setU = new;
-	// 	}
-	// 	p2 = p2->next;
-	// }
-	while(p != NULL){
-		char newData[255];
-		strcpy(newData,p->data);
-		p = p->next;
-		if(ispresent(v,newData)){
+// compute the union of two DLLists u and v
+DLList *setUnion(DLList *u, DLList *v)
+{
+	DLList *union_L;
+	union_L = newDLList();
+	DLListNode *current = u->first;
+	union_L = cloneList(v);
+
+	while(current != NULL){
+		int newdata;
+		newdata = current->value;
+		current = current->next;
+		if(ispresent(v,newdata)){
 			continue;
 		}else{
-			struct DLList * new2 = createNode(newData);
-			new2->next = setU;
-			setU->prev = new2;
-			setU = new2;
+			DLListNode *newnode;
+			newnode = newDLListNode(newdata);
+			newnode->next = union_L->first;
+			union_L->first->prev = newnode;
+			union_L->first = newnode;
 		}
+		union_L->size ++;
 	}
-	return setU;
+	return union_L;
 }
 
-
-struct DLList *setIntersection(struct DLList *u, struct DLList *v){
-	struct DLList *insec = NULL;
-	struct DLList *t1 = u;
-	while(t1!=NULL){
-		if(ispresent(v,t1->data)){
-			struct DLList * new = createNode(t1->data);
-			if (insec == NULL){
-				insec = new;
+// compute the insection of two DLLists u and v
+// put your time complexity analysis for intersection() here
+DLList *setIntersection(DLList *u, DLList *v)
+{
+	DLList *intersection_L;
+	intersection_L = newDLList();
+	DLListNode *current = u->first;
+	while(current!=NULL){
+		if(ispresent(v,current->value)){
+			DLListNode *newnode;
+			newnode = newDLListNode(current->value);
+			if (intersection_L->size == 0){
+				intersection_L ->first = newnode;
 			}else{
-				new->next = insec;
-				insec->prev = new;
-				insec = new;
+				newnode->next = intersection_L ->first;
+				intersection_L ->first->prev = newnode;
+				intersection_L ->first = newnode;
 			}
+			intersection_L->size++;
 		}
-		t1=t1->next;
+		current=current->next;
 	}
-	return insec;
+	return intersection_L;
 }
 
-// when pointer is passed to a function as a parameter, the pointer canot be modified, because this is an outer pointer.
-// in this case, we need to pass another pointer pointing to this one as the parameter, then we can modify this outer pointer inside this function.
-// In the textbook, we dont have to pass a pointer of pointer to free the list, but here we do. 
-// So my guess is because the head of the list is not defined in dynamic memory allocation, which free()becomes useless, 
-// so we have to use a pointer of pointer to modify the head of the list.
-// otherwise, no matter how, when printing head after this free() function, a 3 will be outputed just like what happened before.
-// This guessing needs to be proved in future after gaining a better understanding of C.
-void freeDLList(struct DLList **u){
-	while((*u)!=NULL){
-		struct DLList *temp = (*u)->next;
-		free(*u);
-		*u = temp;
+// free up all space associated with list
+// put your time complexity analysis for freeDLList() here
+void freeDLList(DLList *L)
+{
+	while(L->first != NULL){
+		DLListNode * temp = L->first->next;
+		free(L->first);
+		L->first = temp;
 	}
 }
-//assume the len of DLL is n, then time_complexity:O(n)
 
-int main(void){
-	char *filename = "test.txt";
-	struct DLList *h;
-	struct DLList *copy;
-	struct DLList *su;
-	struct DLList *si;
-	struct DLList *t;
-	// h = CreateDLListFromFileDlist(filename);
-	// printf("The doubly linked list is:\n");
-	// printDLList(h);
-	// printf("\n");
-	// copy = cloneList(h);
-	// printf("The identical copied doubly linked list is:\n");
-	// printDLList(copy);
-	
-	// freeDLList(&copy);
-	// printDLList(copy);
 
-	//problem: when running setunion and setintersection, no out.
-	h = CreateDLListFromFileDlist(filename); 
-	t = CreateDLListFromFileDlist(filename);
-	t = CreateDLListFromFileDlist(filename);
-	t = CreateDLListFromFileDlist(filename);
-	printDLList(t);
-	// su = setUnion(h, t);
-	// // si = setIntersection(h, t);
-	// printDLList(su);
-	return 0;
+// display items of a DLList
+// put your time complexity analysis for printDDList(): O(u->size)
+void printDLList(DLList *u)
+{
+	DLListNode *p;
+	p = u->first;
+	while(p!=NULL){
+		printf("%d\n",p->value);
+		p = p->next;
+	}
+}
+
+int main()
+{
+ DLList *list1, *list2, *list3, *list4;
+
+ list1=CreateDLListFromFileDlist("File1.txt");
+ printDLList(list1);
+
+ list2=CreateDLListFromFileDlist("File2.txt");
+ printDLList(list2);
+
+ list3=setUnion(list1, list2);
+ printDLList(list3);
+
+ list4=setIntersection(list1, list2);
+ printDLList(list4);
+
+ freeDLList(list1);
+ freeDLList(list2);
+ freeDLList(list3);
+ freeDLList(list4);
+
+ printf("please type all the integers of list1\n");
+ list1=CreateDLListFromFileDlist("stdin");
+
+ printf("please type all the integers of list2\n");
+ list2=CreateDLListFromFileDlist("stdin");
+
+ list3=cloneList(list1);
+ printDLList(list3);
+ list4=cloneList(list2);
+ printDLList(list4);
+
+ freeDLList(list1);
+ freeDLList(list2);
+ freeDLList(list3);
+ freeDLList(list4);
+
+ return 0; 
 }
